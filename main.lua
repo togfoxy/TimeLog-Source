@@ -18,10 +18,10 @@ Nativefs = require 'lib.nativefs'
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
-TIMER_SETTING = 5 -- 30 mins * 60 seconds = 1800
-TIMER = TIMER_SETTING
+TIMER_SETTING = 1800 -- 30 mins * 60 seconds = 1800
+TIMER = 0			-- timer counts up from zero
 
-local function SaveRecent()
+local function SaveData()
 	local savefile
 	local success, message
 	local savedir = love.filesystem.getSource()
@@ -29,9 +29,30 @@ local function SaveRecent()
 	local savestring = PERSON_NAME .. ";" .. ACTIVITY .. ";" .. FOLDER
     savefile = savedir .. "/recent.dat"
     success, message = Nativefs.write(savefile, savestring)
+
+	local logfile = FOLDER .. "/" .. PERSON_NAME .. "TimeLog.csv"
+	local savestring = os.date() .. "," .. PERSON_NAME .. "," .. ACTIVITY .. "," .. cf.round(TIMER)
+	if Checked100 then
+		savestring = savestring .. "," .. cf.round(TIMER)
+	elseif Checked75 then
+		savestring = savestring .. "," .. cf.round(TIMER * 0.75)
+	elseif Checked50 then
+		savestring = savestring .. "," .. cf.round(TIMER * 0.50)
+	elseif Checked25 then
+		savestring = savestring .. "," .. cf.round(TIMER * 0.25)
+	elseif Checked0 then
+		savestring = savestring .. "," .. cf.round(TIMER * 0)
+	else
+		error()
+	end
+
+	savestring = savestring .. "\n"
+	success, message = Nativefs.append(logfile, savestring)
+
+	TIMER = 0
 end
 
-local function LoadRecent()
+local function LoadData()
 	local savedir = love.filesystem.getSource()
     love.filesystem.setIdentity( savedir )
 
@@ -46,8 +67,14 @@ local function LoadRecent()
 	PERSON_NAME = string.sub(contents, 1, pos1 - 1)
 	ACTIVITY = string.sub(contents, pos1 + 1, pos2 - 1)
 	FOLDER = string.sub(contents, pos2 + 1)
+end
 
-	print("Just loaded " .. PERSON_NAME, ACTIVITY, FOLDER)
+function CheckBoxActive()
+	if Checked100 or Checked75 or Checked50 or Checked25 or Checked0 then
+		return true
+	else
+		return false
+	end
 end
 
 function DrawForm()
@@ -74,6 +101,9 @@ function DrawForm()
 	Slab.BeginLayout("MMLayout",{AlignX="center",AlignY="center",AlignRowY="center",ExpandW=false,Columns = 1})
 
 	Slab.SetLayoutColumn(1)
+
+	Slab.Text(cf.round(TIMER))
+	Slab.NewLine()
 
 	Slab.Text("Your name:")
 	Slab.SameLine()
@@ -123,7 +153,7 @@ function DrawForm()
 
 	-- Slab.Text("25%")
 	if Slab.CheckBox(Checked25, "25%") then
-		Checked25 = not Checked25
+		Checked25 = false
 		Checked75 = false
 		Checked50 = false
 		Checked100 = false
@@ -136,13 +166,16 @@ function DrawForm()
 	end
 
 	if Slab.Button("Save",{W=155}) then
-		SaveRecent()
+		if CheckBoxActive() then
+			SaveData()
+		end
 	end
 
-
 	if Slab.Button("Save and quit",{W=155}) then
-		SaveRecent()
-		love.event.quit()
+		if CheckBoxActive() then
+			SaveData()
+			love.event.quit()
+		end
 	end
 
 	Slab.EndLayout()
@@ -168,7 +201,7 @@ function love.load()
 	-- Initalize GUI Library
 	Slab.Initialize()
 
-	LoadRecent()
+	LoadData()
 
 end
 
@@ -185,8 +218,8 @@ function love.update(dt)
 	res.update()
 	Slab.Update(dt)
 
-	TIMER = TIMER - dt
-	if TIMER <= 0 then
+	TIMER = TIMER + dt
+	if TIMER >= TIMER_SETTING then
 		DrawForm()
 	end
 end
