@@ -18,7 +18,7 @@ Nativefs = require 'lib.nativefs'
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
-TIMER_SETTING = 5 -- 30 mins * 60 seconds = 1800
+TIMER_SETTING = 1800 -- 30 mins * 60 seconds = 1800
 TIMER = 0			-- timer counts up from zero
 
 local function SaveData()
