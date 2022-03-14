@@ -63,28 +63,44 @@ function DrawForm()
 
 	Slab.Text("Productivity")
 	-- Slab.Text("100%")
-	if Slab.CheckBox(Checked, "100%") then
-		Checked100 = not Checked
+	if Slab.CheckBox(Checked100, "100%") then
+		Checked100 = not Checked100
+		Checked75 = false
+		Checked50 = false
+		Checked25 = false
+		Checked0 = false
 	end
 
 	-- Slab.Text("75%")
-	if Slab.CheckBox(Checked, "75%") then
-		Checked75 = not Checked
+	if Slab.CheckBox(Checked75, "75%") then
+		Checked75 = not Checked75
+		Checked100 = false
+		Checked50 = false
+		Checked25 = false
+		Checked0 = false
 	end
 
 	-- Slab.Text("50%")
-	if Slab.CheckBox(Checked, "50%") then
-	Checked50 = not Checked
+	if Slab.CheckBox(Checked50, "50%") then
+		Checked50 = not Checked50
+		Checked75 = false
+		Checked100 = false
+		Checked25 = false
+		Checked0 = false
 	end
 
 	-- Slab.Text("25%")
-	if Slab.CheckBox(Checked, "25%") then
-		Checked25 = not Checked
+	if Slab.CheckBox(Checked25, "25%") then
+		Checked25 = not Checked25
+		Checked75 = false
+		Checked50 = false
+		Checked100 = false
+		Checked0 = false
 	end
 
 	-- Slab.Text("0%")
-	if Slab.CheckBox(Checked, "0%") then
-		Checked0 = not Checked
+	if Slab.CheckBox(Checked0, "0%") then
+		Checked0 = not Checked0
 	end
 
 	if Slab.Button("Save",{W=155}) then
