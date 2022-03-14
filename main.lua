@@ -18,7 +18,7 @@ Nativefs = require 'lib.nativefs'
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
-TIMER_SETTING = 1800 -- 30 mins * 60 seconds = 1800
+TIMER_SETTING = 5 -- 30 mins * 60 seconds = 1800
 TIMER = 0			-- timer counts up from zero
 
 local function SaveData()
@@ -61,12 +61,15 @@ local function LoadData()
     savefile = savedir .. "/recent.dat"
     contents, _ = Nativefs.read(savefile)
 
-	local pos1 = string.find(contents, ";")
-	local pos2 = string.find(contents, ";", pos1 + 1)
+	if contents ~= nil then
 
-	PERSON_NAME = string.sub(contents, 1, pos1 - 1)
-	ACTIVITY = string.sub(contents, pos1 + 1, pos2 - 1)
-	FOLDER = string.sub(contents, pos2 + 1)
+		local pos1 = string.find(contents, ";")
+		local pos2 = string.find(contents, ";", pos1 + 1)
+
+		PERSON_NAME = string.sub(contents, 1, pos1 - 1)
+		ACTIVITY = string.sub(contents, pos1 + 1, pos2 - 1)
+		FOLDER = string.sub(contents, pos2 + 1)
+	end
 end
 
 function CheckBoxActive()
