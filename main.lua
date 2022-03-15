@@ -212,6 +212,8 @@ function love.load()
 	-- Initalize GUI Library
 	Slab.Initialize()
 
+	sound = love.audio.newSource("ding.ogg", "static")
+
 	LoadData()
 
 end
@@ -229,8 +231,11 @@ function love.update(dt)
 	res.update()
 	Slab.Update(dt)
 
+	DrawForm()
+
 	TIMER = TIMER + dt
 	if TIMER >= TIMER_SETTING then
-		DrawForm()
+		--! make sound
+		sound:play()
 	end
 end
