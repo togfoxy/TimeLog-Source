@@ -31,17 +31,20 @@ local function SaveData()
     success, message = Nativefs.write(savefile, savestring)
 
 	local logfile = FOLDER .. "/" .. PERSON_NAME .. "TimeLog.csv"
-	local savestring = os.date() .. "," .. PERSON_NAME .. "," .. ACTIVITY .. "," .. cf.round(TIMER)
+	local timespent = cf.round(TIMER)
+	if OVERRIDE ~= nil then timespent = OVERRIDE end
+
+	local savestring = os.date() .. "," .. PERSON_NAME .. "," .. ACTIVITY .. "," .. timespent
 	if Checked100 then
-		savestring = savestring .. "," .. cf.round(TIMER)
+		savestring = savestring .. "," .. timespent
 	elseif Checked75 then
-		savestring = savestring .. "," .. cf.round(TIMER * 0.75)
+		savestring = savestring .. "," .. timespent * 0.75
 	elseif Checked50 then
-		savestring = savestring .. "," .. cf.round(TIMER * 0.50)
+		savestring = savestring .. "," .. timespent * 0.50
 	elseif Checked25 then
-		savestring = savestring .. "," .. cf.round(TIMER * 0.25)
+		savestring = savestring .. "," .. timespent * 0.25
 	elseif Checked0 then
-		savestring = savestring .. "," .. cf.round(TIMER * 0)
+		savestring = savestring .. "," .. timespent * 0
 	else
 		error()
 	end
@@ -50,6 +53,7 @@ local function SaveData()
 	success, message = Nativefs.append(logfile, savestring)
 
 	TIMER = 0
+	OVERRIDE = nil
 end
 
 local function LoadData()
@@ -103,13 +107,14 @@ function DrawForm()
 	Slab.BeginWindow('MainMenu', FormOptions)
 	Slab.BeginLayout("TimerLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 1})
 
-	Slab.Textf(cf.round(TIMER), {Align="center"})
-	--Slab.NewLine()
+
 
 	Slab.EndLayout()
 
-	Slab.BeginLayout("MMLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 2})
+	Slab.BeginLayout("MMLayout",{AlignX="right",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 2})
 	Slab.SetLayoutColumn(1)
+
+	Slab.Text("Seconds:")
 
 	Slab.Text("Your name:")
 
@@ -117,7 +122,12 @@ function DrawForm()
 
 	Slab.Text("Source folder:")
 
+	Slab.Text("Over-ride:")
+
 	Slab.SetLayoutColumn(2)
+
+	Slab.Textf(cf.round(TIMER), {Align="center"})
+
 	if Slab.Input('Name', {Text = PERSON_NAME}) then
 		PERSON_NAME = Slab.GetInputText()
 	end
@@ -127,6 +137,10 @@ function DrawForm()
 	end
 	if Slab.Input('Folder', {Text = FOLDER}) then
 		FOLDER = Slab.GetInputText()
+	end
+
+	if Slab.Input('override', {Text = OVERRIDE}) then
+		OVERRIDE = Slab.GetInputText()
 	end
 
 	Slab.EndLayout()
@@ -212,6 +226,8 @@ function love.load()
 	-- Initalize GUI Library
 	Slab.Initialize()
 
+	sound = love.audio.newSource("ding.ogg", "static")
+
 	LoadData()
 
 end
@@ -229,8 +245,11 @@ function love.update(dt)
 	res.update()
 	Slab.Update(dt)
 
+	DrawForm()
+
 	TIMER = TIMER + dt
 	if TIMER >= TIMER_SETTING then
-		DrawForm()
+		--! make sound
+		sound:play()
 	end
 end
