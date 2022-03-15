@@ -1,4 +1,4 @@
-GAME_VERSION = "0.01"
+GAME_VERSION = "0.02"
 
 inspect = require 'lib.inspect'
 -- https://github.com/kikito/inspect.lua
@@ -15,10 +15,10 @@ Slab = require 'lib.Slab.Slab'
 Nativefs = require 'lib.nativefs'
 -- https://github.com/megagrump/nativefs
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 480
+SCREEN_WIDTH = 230
+SCREEN_HEIGHT = 280
 
-TIMER_SETTING = 5 -- 30 mins * 60 seconds = 1800
+TIMER_SETTING = 1200 -- 20 mins * 60 seconds = 1200
 TIMER = 0			-- timer counts up from zero
 
 local function SaveData()
@@ -82,8 +82,8 @@ end
 
 function DrawForm()
 
-	local intSlabWidth = 300 -- the width of the main menu slab. Change this to change appearance.
-	local intSlabHeight = 300 	-- the height of the main menu slab
+	local intSlabWidth = 225 -- the width of the main menu slab. Change this to change appearance.
+	local intSlabHeight = 275 	-- the height of the main menu slab
 	local fltSlabWindowX = love.graphics.getWidth() / 2 - intSlabWidth / 2
 	local fltSlabWindowY = love.graphics.getHeight() / 2 - intSlabHeight / 2
 
@@ -101,33 +101,40 @@ function DrawForm()
 	}
 
 	Slab.BeginWindow('MainMenu', FormOptions)
-	Slab.BeginLayout("MMLayout",{AlignX="center",AlignY="center",AlignRowY="center",ExpandW=false,Columns = 1})
+	Slab.BeginLayout("TimerLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 1})
 
+	Slab.Textf(cf.round(TIMER), {Align="center"})
+	--Slab.NewLine()
+
+	Slab.EndLayout()
+
+	Slab.BeginLayout("MMLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 2})
 	Slab.SetLayoutColumn(1)
 
-	Slab.Text(cf.round(TIMER))
-	Slab.NewLine()
-
 	Slab.Text("Your name:")
-	Slab.SameLine()
+
+	Slab.Text("Recent activity:")
+
+	Slab.Text("Source folder:")
+
+	Slab.SetLayoutColumn(2)
 	if Slab.Input('Name', {Text = PERSON_NAME}) then
 		PERSON_NAME = Slab.GetInputText()
 	end
 
-	Slab.Text("Recent activity:")
-	Slab.SameLine()
 	if Slab.Input('Activity', {Text = ACTIVITY}) then
 		ACTIVITY = Slab.GetInputText()
 	end
-
-	Slab.Text("Source folder:")
-	Slab.SameLine()
 	if Slab.Input('Folder', {Text = FOLDER}) then
 		FOLDER = Slab.GetInputText()
 	end
 
+	Slab.EndLayout()
+
+	Slab.BeginLayout("ButtonLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 1})
+
 	Slab.Text("Productivity")
-	-- Slab.Text("100%")
+
 	if Slab.CheckBox(Checked100, "100%") then
 		Checked100 = not Checked100
 		Checked75 = false
@@ -194,6 +201,7 @@ function love.load()
         gbolDebug = false
     else
         void = love.window.setMode(SCREEN_WIDTH, SCREEN_HEIGHT,{fullscreen=false,display=1,resizable=true, borderless=false})	-- display = monitor number (1 or 2)
+		TIMER_SETTING = 5
     end
 
 	love.window.setTitle("Time Log " .. GAME_VERSION)
