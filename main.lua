@@ -21,12 +21,12 @@ SCREEN_HEIGHT = 300
 TIMER_SETTING = 1200 -- 20 mins * 60 seconds = 1200
 TIMER = 0			-- timer counts up from zero
 
-savefile = love.filesystem.getSource() .. "/recent.dat"
+savefile = love.filesystem.getSourceBaseDirectory( ) .. "/recent.dat"
 
 local function SaveData()
 	-- local savefile
 	local success, message
-	local savedir = love.filesystem.getSource()
+	local savedir = love.filesystem.getSourceBaseDirectory( )
 
 	local savestring = PERSON_NAME .. ";" .. ACTIVITY .. ";" .. FOLDER
     -- savefile = savedir .. "/recent.dat"
@@ -59,12 +59,10 @@ local function SaveData()
 end
 
 local function LoadData()
-	local savedir = love.filesystem.getSource()
-    love.filesystem.setIdentity( savedir )
+	-- local savedir = love.filesystem.getSourceBaseDirectory( )
+    local contents
 
-    local savefile, contents
-
-    savefile = savedir .. "/recent.dat"
+    -- savefile = savedir .. "/recent.dat"
     contents, _ = Nativefs.read(savefile)
 
 	if contents ~= nil then
@@ -239,8 +237,8 @@ function love.draw()
 
     res.start()
 
-	love.graphics.setColor(1,1,1,1)
-	love.graphics.print(savefile or "",10,50)
+	-- love.graphics.setColor(1,1,1,1)
+	-- love.graphics.print(savefile or "",10,50)
 
 	Slab.Draw()
     res.stop()
