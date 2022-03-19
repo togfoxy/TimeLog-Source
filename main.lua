@@ -1,4 +1,4 @@
-GAME_VERSION = "0.02"
+GAME_VERSION = "0.03"
 
 inspect = require 'lib.inspect'
 -- https://github.com/kikito/inspect.lua
@@ -15,19 +15,21 @@ Slab = require 'lib.Slab.Slab'
 Nativefs = require 'lib.nativefs'
 -- https://github.com/megagrump/nativefs
 
-SCREEN_WIDTH = 230
-SCREEN_HEIGHT = 280
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 300
 
 TIMER_SETTING = 1200 -- 20 mins * 60 seconds = 1200
 TIMER = 0			-- timer counts up from zero
 
+savefile = love.filesystem.getSource() .. "/recent.dat"
+
 local function SaveData()
-	local savefile
+	-- local savefile
 	local success, message
 	local savedir = love.filesystem.getSource()
 
 	local savestring = PERSON_NAME .. ";" .. ACTIVITY .. ";" .. FOLDER
-    savefile = savedir .. "/recent.dat"
+    -- savefile = savedir .. "/recent.dat"
     success, message = Nativefs.write(savefile, savestring)
 
 	local logfile = FOLDER .. "/" .. PERSON_NAME .. "TimeLog.csv"
@@ -86,8 +88,8 @@ end
 
 function DrawForm()
 
-	local intSlabWidth = 225 -- the width of the main menu slab. Change this to change appearance.
-	local intSlabHeight = 275 	-- the height of the main menu slab
+	local intSlabWidth = SCREEN_WIDTH -- the width of the main menu slab. Change this to change appearance.
+	local intSlabHeight = SCREEN_HEIGHT 	-- the height of the main menu slab
 	local fltSlabWindowX = love.graphics.getWidth() / 2 - intSlabWidth / 2
 	local fltSlabWindowY = love.graphics.getHeight() / 2 - intSlabHeight / 2
 
@@ -99,7 +101,7 @@ function DrawForm()
 		H = intSlabHeight,
 		Border = 0,
 		AutoSizeWindow=false,
-		AllowMove=false,
+		AllowMove=true,
 		AllowResize=false,
 		NoSavedSettings=true
 	}
@@ -128,14 +130,14 @@ function DrawForm()
 
 	Slab.Textf(cf.round(TIMER), {Align="center"})
 
-	if Slab.Input('Name', {Text = PERSON_NAME}) then
+	if Slab.Input('Name', {Text = PERSON_NAME, W=200}) then
 		PERSON_NAME = Slab.GetInputText()
 	end
 
-	if Slab.Input('Activity', {Text = ACTIVITY}) then
+	if Slab.Input('Activity', {Text = ACTIVITY, W=200}) then
 		ACTIVITY = Slab.GetInputText()
 	end
-	if Slab.Input('Folder', {Text = FOLDER}) then
+	if Slab.Input('Folder', {Text = FOLDER, W=200}) then
 		FOLDER = Slab.GetInputText()
 	end
 
@@ -219,7 +221,7 @@ function love.load()
     end
 
 	love.window.setTitle("Time Log " .. GAME_VERSION)
-	love.graphics.setBackgroundColor(0.4, 0.88, 1.0)
+	love.graphics.setBackgroundColor(0, 0, 0)
 
 	-- cf.AddScreen("MainMenu", SCREEN_STACK)
 
@@ -236,6 +238,10 @@ end
 function love.draw()
 
     res.start()
+
+	love.graphics.setColor(1,1,1,1)
+	love.graphics.print(savefile or "",10,50)
+
 	Slab.Draw()
     res.stop()
 end
