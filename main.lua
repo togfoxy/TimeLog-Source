@@ -16,7 +16,7 @@ Nativefs = require 'lib.nativefs'
 -- https://github.com/megagrump/nativefs
 
 SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 300
+SCREEN_HEIGHT = 350
 
 TIMER_SETTING = 1200 -- 20 mins * 60 seconds = 1200
 TIMER = 0			-- timer counts up from zero
@@ -86,8 +86,8 @@ end
 
 function DrawForm()
 
-	local intSlabWidth = SCREEN_WIDTH -- the width of the main menu slab. Change this to change appearance.
-	local intSlabHeight = SCREEN_HEIGHT 	-- the height of the main menu slab
+	local intSlabWidth = SCREEN_WIDTH * 0.9 -- the width of the main menu slab. Change this to change appearance.
+	local intSlabHeight = SCREEN_HEIGHT * 0.9	-- the height of the main menu slab
 	local fltSlabWindowX = love.graphics.getWidth() / 2 - intSlabWidth / 2
 	local fltSlabWindowY = love.graphics.getHeight() / 2 - intSlabHeight / 2
 
@@ -97,19 +97,14 @@ function DrawForm()
 		Y = fltSlabWindowY,
 		W = intSlabWidth,
 		H = intSlabHeight,
-		Border = 0,
+		Border = 5,
 		AutoSizeWindow=false,
-		AllowMove=true,
+		AllowMove=false,
 		AllowResize=false,
 		NoSavedSettings=true
 	}
 
 	Slab.BeginWindow('MainMenu', FormOptions)
-	Slab.BeginLayout("TimerLayout",{AlignX="center",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 1})
-
-
-
-	Slab.EndLayout()
 
 	Slab.BeginLayout("MMLayout",{AlignX="right",AlignY="top",AlignRowY="center",ExpandW=false,Columns = 2})
 	Slab.SetLayoutColumn(1)
@@ -236,7 +231,6 @@ end
 function love.draw()
 
     res.start()
-
 	-- love.graphics.setColor(1,1,1,1)
 	-- love.graphics.print(savefile or "",10,50)
 
