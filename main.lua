@@ -53,9 +53,22 @@ local function SaveData()
 	end
 
 	savestring = savestring .. "\n"
-	success, message = Nativefs.append(logfile, savestring)
 
-	if not success then wrongsound:play() end
+	-- success, message = Nativefs.append(logfile, savestring)
+	file = io.open(logfile, "a+")
+
+	if file == nil then
+		wrongsound:play()
+		message = err
+	else
+		-- file:write(savestring)
+		-- file:close()
+		io.output(file)
+		io.write(savestring)
+		io.close(file)
+	end
+
+	-- if not success then wrongsound:play() end
 
 	TIMER = 0
 	OVERRIDE = nil
@@ -102,7 +115,7 @@ function DrawForm()
 		H = intSlabHeight,
 		Border = 5,
 		AutoSizeWindow=false,
-		AllowMove=false,
+		AllowMove=true,
 		AllowResize=false,
 		NoSavedSettings=true
 	}
