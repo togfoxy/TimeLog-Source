@@ -1,4 +1,4 @@
-GAME_VERSION = "0.03"
+GAME_VERSION = "0.04"
 
 inspect = require 'lib.inspect'
 -- https://github.com/kikito/inspect.lua
@@ -15,8 +15,8 @@ Slab = require 'lib.Slab.Slab'
 Nativefs = require 'lib.nativefs'
 -- https://github.com/megagrump/nativefs
 
-SCREEN_WIDTH = 500
-SCREEN_HEIGHT = 350
+SCREEN_WIDTH = 500	-- 500
+SCREEN_HEIGHT = 350	-- 350
 
 TIMER_SETTING = 1200 -- 20 mins * 60 seconds = 1200
 TIMER = 0			-- timer counts up from zero
@@ -25,18 +25,19 @@ savefile = love.filesystem.getSourceBaseDirectory( ) .. "/recent.dat"
 
 local function SaveData()
 	-- local savefile
-	local success, message
 	local savedir = love.filesystem.getSourceBaseDirectory( )
 
-	local savestring = PERSON_NAME .. ";" .. ACTIVITY .. ";" .. FOLDER
+	savestring = PERSON_NAME .. ";" .. ACTIVITY .. ";" .. FOLDER
     -- savefile = savedir .. "/recent.dat"
     success, message = Nativefs.write(savefile, savestring)
 
-	local logfile = FOLDER .. "/" .. PERSON_NAME .. "TimeLog.csv"
+	logfile = FOLDER .. "\\" .. PERSON_NAME .. "TimeLog"
+	logfile = logfile .. ".csv"
+
 	local timespent = cf.round(TIMER)
 	if OVERRIDE ~= nil then timespent = OVERRIDE end
 
-	local savestring = os.date() .. "," .. PERSON_NAME .. "," .. ACTIVITY .. "," .. timespent
+	savestring = os.date() .. "," .. PERSON_NAME .. "," .. ACTIVITY .. "," .. timespent
 	if Checked100 then
 		savestring = savestring .. "," .. timespent
 	elseif Checked75 then
@@ -53,6 +54,8 @@ local function SaveData()
 
 	savestring = savestring .. "\n"
 	success, message = Nativefs.append(logfile, savestring)
+
+	if not success then wrongsound:play() end
 
 	TIMER = 0
 	OVERRIDE = nil
@@ -222,6 +225,7 @@ function love.load()
 	Slab.Initialize()
 
 	sound = love.audio.newSource("ding.ogg", "static")
+	wrongsound = love.audio.newSource("wrong.mp3", "static")
 
 	LoadData()
 
@@ -231,8 +235,12 @@ end
 function love.draw()
 
     res.start()
-	-- love.graphics.setColor(1,1,1,1)
-	-- love.graphics.print(savefile or "",10,50)
+	love.graphics.setColor(1,1,1,1)
+	love.graphics.print(logfile or "",30,50)
+	love.graphics.print(savestring or "",30,70)
+	love.graphics.print(tostring(success) or "",30,90)
+	love.graphics.print(message or "",30,110)
+
 
 	Slab.Draw()
     res.stop()
