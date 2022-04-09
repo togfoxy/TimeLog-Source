@@ -188,7 +188,7 @@ function DrawForm()
 
 	-- Slab.Text("25%")
 	if Slab.CheckBox(Checked25, "25%") then
-		Checked25 = false
+		Checked25 = not Checked25
 		Checked75 = false
 		Checked50 = false
 		Checked100 = false
@@ -198,6 +198,10 @@ function DrawForm()
 	-- Slab.Text("0%")
 	if Slab.CheckBox(Checked0, "0%") then
 		Checked0 = not Checked0
+		Checked75 = false
+		Checked50 = false
+		Checked100 = false
+		Checked25 = false
 	end
 
 	if Slab.Button("Save",{W=155}) then
